@@ -1,34 +1,56 @@
-button{
-    margin: 0vw 10vw;
+button {
+    margin: 0vw 1vw;
 }
 
-#addComponentDiv, #addColumnDiv{
-    display:none;
+#addComponentDiv {
+    display: none;
     padding: 5vw;
 }
 
-.headerButton{
+.headerButton {
     margin-left: 0;
-    background-color: chocolate;
+    background-color: #494430;
     border: none;
-    font-weight: bold;
+    color: white;
 }
 
 #finalTable thead {
-    background-color: chocolate;
+    background-color: #494430;
 }
 
-#finalTable{
+#finalTable {
     margin: 2vw;
     table-layout: fixed;
     width: 90vw;
+    border: 1px solid #e0e0e0;
+    outline-style: solid;
+    outline-color: #ededed;
+    outline-width: 5px;
 }
 
-#finalTable th:first-child{
+#finalTable th {
+    border-color: #4c4a3b;
+}
+
+#finalTable th:first-child {
     width: 50%;
 }
 
-#finalTable tfoot{
+#finalTable td {
+    border-color: #e0e0e0;
+}
+
+
+#finalTable tfoot {
     text-align: right;
-    border: solid ;
+    border: #e0e0e0;
+}
+
+span {
+    padding: 2vw;
+}
+
+.navigationButton, #paginatorSelector{
+    border: none;
+    background-color: white;
 }

@@ -1,0 +1,13 @@
+jsonData = `[
+    {"TaskName":"Take ot the trash","Priority":"Medium","Done":false},
+    {"TaskName":"Feed the dog","Priority":"High","Done":true},
+    {"TaskName":"Order Lunch","Priority":"High","Done":false},
+    {"TaskName":"Send email to Peter","Priority":"Low","Done":true},
+    {"TaskName":"Buy groceries","Priority":"Medium","Done":false},
+    {"TaskName":"Do homework","Priority":"High","Done":false},
+    {"TaskName":"Do some excercise","Priority":"Low","Done":false},
+    {"TaskName":"Visit Grandma","Priority":"High","Done":false},
+    {"TaskName":"Eat some chocolate","Priority":"High","Done":true},
+    {"TaskName":"Watch new episode of tv show","Priority":"Medium","Done":false},
+    {"TaskName":"Do 1 lesson of JavaScript course","Priority":"High","Done":false}
+]`;
