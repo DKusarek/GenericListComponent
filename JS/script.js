@@ -4,8 +4,6 @@
     var columnNames = [];
     var columnDataTypes = [];
 
-    window.localStorage.clear();
-
     if (storage.userData !== undefined) {
         userData = JSON.parse(storage.userData);
     } else {
@@ -31,7 +29,7 @@
             }
             columnDataTypes.push(inputFormat);
         }
-        var createColumns = function () {
+        var createExampleColumns = function () {
             this.createColumn("TaskName", 0);
             this.createColumn("Priority", 0);
             this.createColumn("Done", 1);
@@ -47,7 +45,7 @@
         }
         return {
             createColumn: createColumn,
-            createColumns: createColumns,
+            createExampleColumns: createExampleColumns,
             seedStorage: seedStorage
         }
     })();
@@ -55,7 +53,7 @@
     var tableConstruction = (function () {
         var elementsPerPage = 5;
         var indexOfFirstElement = 1;
-        var sortState = ['noSort', 'noSort', 'noSort'];
+        var sortState = [];
         var addComponentButton = function () {
             var button = document.createElement("button");
             var addComponentDiv = document.getElementById("addComponentButtonDiv");
@@ -152,7 +150,7 @@
             tbody.id = "tableTbody";
             finalTable.appendChild(tbody);
             var rowIndex = 0;
-            var end = elementsPerPage > userData.length ? userData : indexOfFirstElement + elementsPerPage - 1;
+            var end = elementsPerPage > userData.length ? userData.length : indexOfFirstElement + elementsPerPage - 1;
             for (var index = indexOfFirstElement - 1; index < end; index++) {
                 var nextRow = tbody.insertRow(rowIndex++);
                 userData[index].forEach(function (item, index) {
@@ -177,9 +175,12 @@
             var row = tfoot.insertRow(0);
             var cell = row.insertCell(0);
             var footerDiv = document.createElement('div');
-            cell.colSpan = 3;
+            cell.colSpan = columnNames.length;
             footerDiv.id = "footerDiv";
             cell.appendChild(footerDiv);
+            for (var i = 0; i < columnNames.length; i++) {
+                sortState.push('noSort');
+            };
 
         }
         var updateTable = function (sort, columnIndex) {
@@ -361,9 +362,20 @@
             addPaginationFunctionality: addPaginationFunctionality
         }
     })();
+    
+    //window.localStorage.clear();
+    
+    //Commnent this to create our own table
     tableConstruction.addComponentButton();
-    adminFunctions.createColumns();
-    adminFunctions.seedStorage();
+    adminFunctions.createExampleColumns();
+    if (userData.length == 0) {
+        adminFunctions.seedStorage();
+    }
+    //end of comment
+    
+    //example how to create column:
+    //First argument is columnName, second - column type: {0: 'text, 1:'boolean', 2:'date'}
+    //    adminFunctions.createColumn("name", 0);
     tableConstruction.createAddContentForm();
     tableConstruction.createTable();
     tableConstruction.addSortingFunctionality();
