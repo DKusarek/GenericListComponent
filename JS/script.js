@@ -55,11 +55,13 @@
     var tableConstruction = (function () {
         var elementsPerPage = 5;
         var indexOfFirstElement = 1;
+        var sortState = ['noSort', 'noSort', 'noSort'];
         var addComponentButton = function () {
             var button = document.createElement("button");
             var addComponentDiv = document.getElementById("addComponentButtonDiv");
             var buttonText = document.createTextNode("Add Component");
             addComponentDiv.appendChild(button);
+            button.className = "addComponentButton";
             button.appendChild(buttonText);
             var addComponentDiv = document.getElementById("addComponentDiv");
             button.addEventListener('click', function () {
@@ -70,7 +72,10 @@
             });
         }
         var createAddContentForm = function () {
-            var addComponentForm = document.getElementById("addComponentForm");
+            var addComponentFormDiv = document.getElementById("addComponentDiv");
+            var addComponentForm = document.createElement('form');
+            addComponentForm.id = "addComponentForm";
+            addComponentFormDiv.appendChild(addComponentForm);
             columnNames.forEach(function (item, index) {
                 var divRow = document.createElement('div');
                 divRow.className = "row";
@@ -125,7 +130,11 @@
             });
         }
         var createTable = function () {
-            var finalTable = document.getElementById("finalTable");
+            var finalTableDiv = document.getElementById("finalTableDiv");
+            var finalTable = document.createElement('table');
+            finalTable.className = "table table-hover finalTable";
+            finalTable.id = "finalTable";
+            finalTableDiv.appendChild(finalTable);
             var thead = document.createElement('thead');
             finalTable.appendChild(thead);
             var rowHeader = thead.insertRow(0);
@@ -146,7 +155,7 @@
             var end = elementsPerPage > userData.length ? userData : indexOfFirstElement + elementsPerPage - 1;
             for (var index = indexOfFirstElement - 1; index < end; index++) {
                 var nextRow = tbody.insertRow(rowIndex++);
-                userData[index].forEach(function (item,index) {
+                userData[index].forEach(function (item, index) {
                     var td = document.createElement('td');
                     if (columnDataTypes[index] == 'checkbox') {
                         var input = document.createElement('input');
@@ -175,28 +184,44 @@
         }
         var updateTable = function (sort, columnIndex) {
             var copyOfUserData = userData.slice(0);
-            switch (sort) {
-                case 'sortAsc':
-                    copyOfUserData.sort(function (a, b) {
-                        if (a[columnIndex] === b[columnIndex]) {
-                            return 0;
-                        } else {
-                            return a[columnIndex] < b[columnIndex] ? -1 : 1;
-                        }
-                    });
-                    break;
-                case 'sortDesc':
-                    copyOfUserData.sort(function (a, b) {
-                        if (a[columnIndex] === b[columnIndex]) {
-                            return 0;
-                        } else {
-                            return a[columnIndex] > b[columnIndex] ? -1 : 1;
-                        }
-                    });
-                    break;
-                default:
-                    copyOfUserData = userData.slice(0);
+            if (arguments.length == 2) {
+                sortState.forEach(function (item, index) {
+                    if (index == columnIndex) {
+                        sortState[columnIndex] = sort;
+                    } else {
+                        sortState[index] = "noSort";
+                    }
+                });
             }
+            var noSortItems = 0;
+            sortState.forEach(function (item, index) {
+                switch (item) {
+                    case 'sortAsc':
+                        copyOfUserData.sort(function (a, b) {
+                            if (a[index] === b[index]) {
+                                return 0;
+                            } else {
+                                return a[index] < b[index] ? -1 : 1;
+                            }
+                        });
+                        break;
+                    case 'sortDesc':
+                        copyOfUserData.sort(function (a, b) {
+                            if (a[index] === b[index]) {
+                                return 0;
+                            } else {
+                                return a[index] > b[index] ? -1 : 1;
+                            }
+                        });
+                        break;
+                    default:
+                        noSortItems++;
+                }
+            });
+            if (noSortItems == columnNames.length) {
+                copyOfUserData = userData.slice(0);
+            }
+
             var tbody = document.getElementById('tableTbody');
             while (tbody.firstChild) {
                 tbody.removeChild(tbody.firstChild);
@@ -205,7 +230,7 @@
             var end = indexOfFirstElement + elementsPerPage > userData.length ? userData.length : indexOfFirstElement + elementsPerPage - 1;
             for (var index = indexOfFirstElement - 1; index < end; index++) {
                 var nextRow = tbody.insertRow(rowIndex++);
-                userData[index].forEach(function (item,index) {
+                copyOfUserData[index].forEach(function (item, index) {
                     var td = document.createElement('td');
                     if (columnDataTypes[index] == 'checkbox') {
                         var input = document.createElement('input');
@@ -223,6 +248,20 @@
                 });
             }
         }
+        var updateTableHeader = function (sort, columnIndex) {
+            var buttonHeader = document.getElementById(columnNames[columnIndex] + 'Button');
+            var buttonText = buttonHeader.firstChild;
+            switch (sort) {
+                case 'sortAsc':
+                    buttonText = columnNames[columnIndex] + "a";
+                    break;
+                case 'sortDesc':
+                    buttonText = columnNames[columnIndex] + "s";
+                    break;
+                default:
+                    buttonText = columnNames[columnIndex] + "";
+            }
+        }
         var addSortingFunctionality = function () {
             columnNames.forEach(function (item, index) {
                 var buttonName = item + 'Button';
@@ -231,12 +270,15 @@
                     if (button.className == 'headerButton noSort') {
                         button.className = 'headerButton sortAsc';
                         updateTable('sortAsc', index);
+                        updateTableHeader('sortAsc', index);
                     } else if (button.className == 'headerButton sortAsc') {
                         button.className = 'headerButton sortDesc';
                         updateTable('sortDesc', index);
+                        updateTableHeader('sortDesc', index);
                     } else {
                         button.className = 'headerButton noSort';
                         updateTable('noSort', index);
+                        updateTableHeader('noSort', index);
                     }
                 });
             });
@@ -319,21 +361,11 @@
             addPaginationFunctionality: addPaginationFunctionality
         }
     })();
-
-
-
-
-
-
     tableConstruction.addComponentButton();
     adminFunctions.createColumns();
     adminFunctions.seedStorage();
-    //adminFunctions.createColumn("DateDone",2); SPR SORTOWANIE DLA DAT
     tableConstruction.createAddContentForm();
     tableConstruction.createTable();
     tableConstruction.addSortingFunctionality();
     tableConstruction.addPaginationFunctionality();
-
-
-
 }());
